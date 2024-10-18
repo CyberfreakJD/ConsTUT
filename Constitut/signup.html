@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup & Login</title>
+    <style>
+        .hidden { display: none; } /* To hide the forms */
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2 id="formTitle">Signup</h2>
+
+    <!-- Signup Form -->
+    <form id="signupForm">
+        <input type="text" id="name" placeholder="Full Name" required><br><br>
+        <input type="text" id="signupUsername" placeholder="Username" required><br><br>
+        <input type="password" id="signupPassword" placeholder="Password" required><br><br>
+        <button type="submit">Signup</button>
+    </form>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="hidden">
+        <input type="text" id="loginUsername" placeholder="Username" required><br><br>
+        <input type="password" id="loginPassword" placeholder="Password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <!-- Toggle Button -->
+    <button id="toggleButton">Switch to Login</button>
+
+    <script>
+        const signupForm = document.getElementById('signupForm');
+        const loginForm = document.getElementById('loginForm');
+        const toggleButton = document.getElementById('toggleButton');
+        const formTitle = document.getElementById('formTitle');
+
+        // Toggle between Signup and Login
+        toggleButton.addEventListener('click', () => {
+            if (signupForm.classList.contains('hidden')) {
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                toggleButton.textContent = 'Switch to Login';
+                formTitle.textContent = 'Signup';
+            } else {
+                signupForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+                toggleButton.textContent = 'Switch to Signup';
+                formTitle.textContent = 'Login';
+            }
+        });
+
+        // Signup form handling
+        signupForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const username = document.getElementById('signupUsername').value;
+            const password = document.getElementById('signupPassword').value;
+
+            if (localStorage.getItem(username)) {
+                alert('User already exists!');
+            } else {
+                // Create a user object and store it in localStorage
+                const user = {
+                    name: name,
+                    username: username,
+                    password: password
+                };
+
+                localStorage.setItem(username, JSON.stringify(user)); // Store user object
+                alert('User signed up successfully! Redirecting to login...');
+
+                // Clear signup form
+                signupForm.reset();
+
+                // Automatically switch to login form after successful signup
+                toggleButton.click();
+            }
+        });
+
+        // Login form handling
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const storedUser = JSON.parse(localStorage.getItem(username)); // Get user object
+
+            if (storedUser && storedUser.password === password) {
+                alert('Login successful!');
+                window.location.href = 'index.html'; // Redirect to home page
+                loginForm.reset();
+            } else {
+                alert('Invalid username or password!');
+            }
+        });
+    </script>
+</body>
+</html>
